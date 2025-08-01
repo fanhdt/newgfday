@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perempuan Paling Spesial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap");
+
+      :root {
+        --soft-rose: #fdecef;
+        --dusty-pink: #e3b7a0;
+        --lavender-gray: #c8b6c8;
+        --cream: #fff8f0;
+      }
+
+      .font-playfair {
+        font-family: "Playfair Display", serif;
+      }
+      .font-inter {
+        font-family: "Inter", sans-serif;
+      }
+
+      .bg-soft-rose {
+        background-color: var(--soft-rose);
+      }
+      .bg-dusty-pink {
+        background-color: var(--dusty-pink);
+      }
+      .bg-lavender-gray {
+        background-color: var(--lavender-gray);
+      }
+      .bg-cream {
+        background-color: var(--cream);
+      }
+
+      .text-dusty-pink {
+        color: var(--dusty-pink);
+      }
+      .text-lavender-gray {
+        color: var(--lavender-gray);
+      }
+
+      /* Animated Background */
+      .animated-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      .shape {
+        position: absolute;
+        opacity: 0.08;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .shape:nth-child(1) {
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+        animation-duration: 12s;
+      }
+
+      .shape:nth-child(2) {
+        top: 60%;
+        left: 85%;
+        animation-delay: 3s;
+        animation-duration: 10s;
+      }
+
+      .shape:nth-child(3) {
+        top: 30%;
+        left: 25%;
+        animation-delay: 6s;
+        animation-duration: 14s;
+      }
+
+      .shape:nth-child(4) {
+        top: 80%;
+        left: 70%;
+        animation-delay: 2s;
+        animation-duration: 11s;
+      }
+
+      .shape:nth-child(5) {
+        top: 15%;
+        left: 60%;
+        animation-delay: 4s;
+        animation-duration: 13s;
+      }
+
+      .shape:nth-child(6) {
+        top: 45%;
+        left: 10%;
+        animation-delay: 1s;
+        animation-duration: 9s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg) scale(1);
+        }
+        33% {
+          transform: translateY(-30px) rotate(120deg) scale(1.1);
+        }
+        66% {
+          transform: translateY(20px) rotate(240deg) scale(0.9);
+        }
+      }
+
+      /* Fixed Grid Layout */
+      .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 768px) {
+        .photo-grid {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .photo-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.75rem;
+        }
+      }
+
+      .photo-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        opacity: 0;
+        transform: scale(0.8);
+        aspect-ratio: 3/4;
+      }
+
+      .photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.6s ease;
+        filter: none !important;
+        -webkit-filter: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      /* Simple Zoom Animation */
+      .photo-item:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+      }
+
+      .photo-item:hover img {
+        transform: scale(1.1);
+      }
+
+      /* Morphing shapes that appear on scroll */
+      .morphing-shape {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      .morphing-shape svg {
+        width: 60px;
+        height: 60px;
+        filter: drop-shadow(0 4px 8px rgba(227, 183, 160, 0.3));
+      }
+
+      /* Vintage border with animation */
+      .vintage-border {
+        border: 3px solid;
+        border-image: repeating-linear-gradient(45deg, var(--dusty-pink), var(--dusty-pink) 15px, transparent 15px, transparent 30px) 3;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .vintage-border::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -100%;
+        width: 100%;
+        height: calc(100% + 4px);
+        background: linear-gradient(90deg, transparent, rgba(227, 183, 160, 0.3), transparent);
+        animation: shimmer 3s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      .decorative-line {
+        position: relative;
+      }
+
+      .decorative-line::before,
+      .decorative-line::after {
+        content: "❀";
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--dusty-pink);
+        font-size: 1.5rem;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .decorative-line::before {
+        left: -3rem;
+        animation-delay: 0s;
+      }
+
+      .decorative-line::after {
+        right: -3rem;
+        animation-delay: 1s;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translateY(-50%) scale(1);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(-50%) scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      .hero-bg {
+        background: linear-gradient(135deg, var(--soft-rose) 0%, var(--cream) 50%, var(--lavender-gray) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .quote-bg {
+        background: linear-gradient(45deg, var(--cream) 0%, var(--soft-rose) 100%);
+        position: relative;
+      }
+
+      .heart-decoration {
+        position: relative;
+        display: inline-block;
+      }
+
+      .heart-decoration::before {
+        content: "♡";
+        position: absolute;
+        top: -10px;
+        right: -20px;
+        color: var(--dusty-pink);
+        font-size: 1.2rem;
+        opacity: 0.7;
+        animation: heartbeat 2s ease-in-out infinite;
+      }
+
+      @keyframes heartbeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.3);
+        }
+      }
+
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        40% {
+          transform: translateX(-50%) translateY(-10px);
+        }
+        60% {
+          transform: translateX(-50%) translateY(-5px);
+        }
+      }
+
+      .btn-elegant {
+        background: linear-gradient(135deg, var(--dusty-pink), var(--lavender-gray));
+        border: 2px solid transparent;
+        border-radius: 50px;
+        padding: 1rem 2.5rem;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        color: white;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-elegant:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(227, 183, 160, 0.4);
+      }
+
+      .btn-elegant::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .btn-elegant:hover::before {
+        left: 100%;
+      }
+
+      /* Particle effect */
+      .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      .particle {
+        position: absolute;
+        background: var(--dusty-pink);
+        border-radius: 50%;
+        opacity: 0.4;
+        animation: particle-float 12s linear infinite;
+      }
+
+      @keyframes particle-float {
+        0% {
+          transform: translateY(100vh) translateX(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.4;
+        }
+        90% {
+          opacity: 0.4;
+        }
+        100% {
+          transform: translateY(-100px) translateX(50px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* Loading animation */
+      .loading-text {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        color: var(--dusty-pink);
+        opacity: 0;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--cream);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--dusty-pink);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--lavender-gray);
+      }
+
+      /* Additional morphing background elements */
+      .bg-morph {
+        position: absolute;
+        opacity: 0.03;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body class="bg-cream font-inter">
+    <!-- Animated Background -->
+    <div class="animated-bg">
+      <div class="floating-shapes">
+        <div class="shape w-20 h-20 bg-dusty-pink opacity-10" style="border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%"></div>
+        <div class="shape w-16 h-16 bg-lavender-gray opacity-10" style="border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%"></div>
+        <div class="shape w-24 h-24 bg-dusty-pink opacity-10" style="border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%"></div>
+        <div class="shape w-12 h-12 bg-lavender-gray opacity-10" style="border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%"></div>
+        <div class="shape w-18 h-18 bg-dusty-pink opacity-10" style="border-radius: 50% 50% 50% 50% / 40% 60% 40% 60%"></div>
+        <div class="shape w-14 h-14 bg-lavender-gray opacity-10" style="border-radius: 70% 30% 50% 50% / 30% 70% 70% 30%"></div>
+      </div>
+      <div class="particles" id="particles"></div>
+    </div>
+
+    <!-- Morphing shapes for scroll animations -->
+    <div class="morphing-shape" id="morph1" style="top: 20%; left: 10%">
+      <svg viewBox="0 0 100 100">
+        <path d="M50 10 C70 30, 90 50, 50 90 C10 50, 30 30, 50 10 Z" fill="#e3b7a0" opacity="0.6" />
+      </svg>
+    </div>
+    <div class="morphing-shape" id="morph2" style="top: 60%; right: 15%">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="#c8b6c8" opacity="0.5" />
+      </svg>
+    </div>
+    <div class="morphing-shape" id="morph3" style="top: 40%; left: 80%">
+      <svg viewBox="0 0 100 100">
+        <polygon points="50,15 90,85 10,85" fill="#e3b7a0" opacity="0.6" />
+      </svg>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 left-10 w-20 h-20 border-2 border-dusty-pink rounded-full hero-circle"></div>
+        <div class="absolute top-40 right-20 w-16 h-16 border border-lavender-gray rounded-full hero-circle"></div>
+        <div class="absolute bottom-32 left-20 w-12 h-12 border-2 border-dusty-pink rounded-full hero-circle"></div>
+        <div class="absolute bottom-10 right-10 w-24 h-24 border border-lavender-gray rounded-full hero-circle"></div>
+      </div>
+
+      <div class="text-center z-10 px-4 max-w-4xl mx-auto">
+        <h1 class="hero-title font-playfair text-6xl md:text-8xl font-bold text-gray-800 mb-8">Untuk Perempuan</h1>
+        <p class="hero-subtitle font-playfair text-2xl md:text-4xl italic text-dusty-pink mb-12">yang mengubah hariku jadi puisi indah</p>
+        <div class="hero-decoration mb-12">
+          <div class="w-32 h-px bg-dusty-pink mx-auto mb-4"></div>
+          <div class="flex justify-center space-x-4 text-dusty-pink text-2xl">
+            <span class="animate-pulse">❀</span>
+            <span class="animate-pulse" style="animation-delay: 0.5s">♡</span>
+            <span class="animate-pulse" style="animation-delay: 1s">❀</span>
+          </div>
+        </div>
+        <button id="startGallery" class="btn-elegant">Mulai Perjalanan ✨</button>
+      </div>
+
+      <div class="scroll-indicator text-dusty-pink text-2xl">↓</div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section py-20 px-4 bg-cream">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="gallery-title font-playfair text-4xl md:text-6xl font-bold text-gray-800 mb-6 decorative-line">Momen Terindah</h2>
+          <div class="w-24 h-px bg-dusty-pink mx-auto mb-4 gallery-line"></div>
+          <p class="font-inter text-lg text-gray-600 italic gallery-subtitle mb-8">Setiap foto adalah cerita yang tak akan pernah pudar</p>
+          <p class="loading-text text-xl mb-8">Memuat kenangan terindah...</p>
+        </div>
+
+        <div class="photo-grid" id="gallery">
+          <!-- Gallery items akan di-generate dengan JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="quote-bg py-20 px-4 relative">
+      <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(circle at 25% 25%, var(--dusty-pink) 2px, transparent 2px); background-size: 50px 50px"></div>
+      </div>
+
+      <div class="max-w-4xl mx-auto text-center relative z-10">
+        <div class="vintage-border p-12 bg-cream quote-container">
+          <blockquote class="quote-text font-playfair text-3xl md:text-5xl font-medium text-gray-800 leading-relaxed mb-8">"bahkan dibumi yang sangat luas ini , bagian yang paling menyenangkan adalah bertemu denganmu."</blockquote>
+          <div class="flex justify-center items-center space-x-6">
+            <div class="w-16 h-px bg-dusty-pink quote-line"></div>
+            <span class="text-dusty-pink text-3xl animate-pulse">♡</span>
+            <div class="w-16 h-px bg-dusty-pink quote-line"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-soft-rose py-16 px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="footer-content">
+          <p class="font-playfair text-2xl md:text-3xl text-gray-800 mb-6 heart-decoration">Dibuat sepenuh hati untuk kamu</p>
+          <p class="font-inter text-lg text-dusty-pink italic mb-8">Perempuan Favoritku</p>
+
+          <div class="flex justify-center items-center space-x-8 mb-8">
+            <div class="w-20 h-px bg-dusty-pink"></div>
+            <div class="flex space-x-4 text-dusty-pink text-xl">
+              <span class="animate-pulse">❀</span>
+              <span class="animate-pulse" style="animation-delay: 0.5s">♡</span>
+              <span class="animate-pulse" style="animation-delay: 1s">❀</span>
+              <span class="animate-pulse" style="animation-delay: 1.5s">♡</span>
+              <span class="animate-pulse" style="animation-delay: 2s">❀</span>
+            </div>
+            <div class="w-20 h-px bg-dusty-pink"></div>
+          </div>
+
+          <p class="font-inter text-sm text-gray-600">Happy Girlfriend Day ✨</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Register ScrollTrigger plugin
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Gallery images data
+      const galleryImages = [
+        { src: "img/1.jpeg" },
+        { src: "img/2.jpeg" },
+        { src: "img/3.jpeg" },
+        { src: "img/4.jpeg" },
+        { src: "img/5.jpeg" },
+        { src: "img/6.jpeg" },
+        { src: "img/7.jpeg" },
+        { src: "img/8.jpeg" },
+        { src: "img/9.jpeg" },
+        { src: "img/10.jpeg" },
+        { src: "img/11.jpeg" },
+        { src: "img/12.jpeg" },
+      ];
+
+      // Generate gallery items with consistent grid
+      function generateGallery() {
+        const gallery = document.getElementById("gallery");
+
+        galleryImages.forEach((img, index) => {
+          const item = document.createElement("div");
+          item.className = "photo-item";
+          item.innerHTML = `
+            <img src="${img.src}" alt="Momen Spesial ${index + 1}" loading="lazy">
+          `;
+          gallery.appendChild(item);
+        });
+      }
+
+      // Create particles
+      function createParticles() {
+        const particlesContainer = document.getElementById("particles");
+
+        for (let i = 0; i < 30; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+
+          const size = Math.random() * 3 + 2;
+          const left = Math.random() * 100;
+          const animationDelay = Math.random() * 12;
+          const animationDuration = Math.random() * 4 + 8;
+
+          particle.style.width = size + "px";
+          particle.style.height = size + "px";
+          particle.style.left = left + "%";
+          particle.style.animationDelay = animationDelay + "s";
+          particle.style.animationDuration = animationDuration + "s";
+
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      // Simplified ScrollTrigger animations
+      function initScrollAnimations() {
+        // Hero entrance animation
+        const heroTl = gsap.timeline();
+        heroTl
+          .from(".hero-title", {
+            opacity: 0,
+            y: 100,
+            duration: 1.5,
+            ease: "power3.out",
+          })
+          .from(
+            ".hero-subtitle",
+            {
+              opacity: 0,
+              y: 50,
+              duration: 1.2,
+              ease: "power3.out",
+            },
+            "-=1"
+          )
+          .from(
+            ".hero-decoration",
+            {
+              opacity: 0,
+              scale: 0,
+              duration: 1,
+              ease: "back.out(1.7)",
+            },
+            "-=0.8"
+          )
+          .from(
+            "#startGallery",
+            {
+              opacity: 0,
+              y: 30,
+              duration: 1,
+              ease: "power3.out",
+            },
+            "-=0.5"
+          );
+
+        // Gallery title
+        gsap.fromTo(
+          ".gallery-title",
+          {
+            opacity: 0,
+            y: 80,
+            scale: 0.8,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.5,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".gallery-title",
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        // Gallery line and subtitle
+        gsap.fromTo(
+          ".gallery-line",
+          {
+            scaleX: 0,
+          },
+          {
+            scaleX: 1,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".gallery-line",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        gsap.fromTo(
+          ".gallery-subtitle",
+          {
+            opacity: 0,
+            y: 30,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".gallery-subtitle",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        // Simple zoom in animation for gallery items
+        gsap.utils.toArray(".photo-item").forEach((item, index) => {
+          gsap.fromTo(
+            item,
+            {
+              opacity: 0,
+              scale: 0.8,
+            },
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.8,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 90%",
+                end: "bottom 10%",
+                toggleActions: "play none none reverse",
+              },
+              delay: index * 0.1,
+            }
+          );
+        });
+
+        // Quote section
+        gsap.fromTo(
+          ".quote-container",
+          {
+            opacity: 0,
+            scale: 0.9,
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 1.5,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".quote-container",
+              start: "top 70%",
+              end: "bottom 30%",
+              toggleActions: "play none none reverse",
+              onEnter: () => {
+                gsap.fromTo(
+                  ".quote-line",
+                  {
+                    scaleX: 0,
+                  },
+                  {
+                    scaleX: 1,
+                    duration: 1,
+                    ease: "power2.out",
+                    stagger: 0.2,
+                  }
+                );
+              },
+            },
+          }
+        );
+
+        // Footer animation
+        gsap.fromTo(
+          ".footer-content",
+          {
+            opacity: 0,
+            y: 50,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "footer",
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+
+      // Initialize everything when DOM is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        generateGallery();
+        createParticles();
+        initScrollAnimations();
+
+        // Start gallery button functionality
+        document.getElementById("startGallery").addEventListener("click", () => {
+          gsap.to(window, {
+            duration: 1.5,
+            scrollTo: ".gallery-section",
+            ease: "power2.inOut",
+          });
+        });
+
+        // Loading text animation
+        gsap.to(".loading-text", {
+          opacity: 1,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".loading-text",
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        });
+      });
+
+      // Smooth scrolling for anchor links
+      document.addEventListener("click", function (e) {
+        if (e.target.closest('a[href^="#"]')) {
+          e.preventDefault();
+          const target = document.querySelector(e.target.closest("a").getAttribute("href"));
+          if (target) {
+            gsap.to(window, {
+              duration: 1.5,
+              scrollTo: target,
+              ease: "power2.inOut",
+            });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
